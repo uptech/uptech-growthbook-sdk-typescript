@@ -1,0 +1,1 @@
+export { UptechGrowthBookTypescriptWrapper } from './uptech-growthbook-wrapper';
