@@ -1,18 +1,37 @@
 import { FeatureDefinition, GrowthBook } from "@growthbook/growthbook";
 
+interface InitParameters {
+    seeds?: Map<string, any>,
+    overrides?: Map<string, any>,
+}
+
 export class UptechGrowthBookTypescriptWrapper {
-    constructor(apiUrl: string) {
+    constructor(apiUrl: string, getEnv: (key: string) => string | undefined = (key) => process.env[key]) {
         this.url = apiUrl;
+        this.getEnv = getEnv;
     }
     private client: GrowthBook;
     private readonly url: string;
+    private overrides: Map<string, any> = new Map();
+    getEnv: (key: string) => string;
 
-    public async init(seeds?: any): Promise<void> {
+    public async init(
+        {seeds, overrides}: InitParameters
+    ): Promise<void> {
+        this.overrides.clear();
+        if (overrides != null) {
+            this.overrides = overrides;
+        }
         this.client = this.createClient(seeds);
         await this.refresh();
     }
 
-    public initForTests(seeds: any): void {
+    public initForTests({seeds, overrides}: InitParameters
+    ): void {
+        this.overrides.clear();
+        if (overrides != null) {
+            this.overrides = overrides;
+        }
         this.client = this.createClient(seeds);
     }
 
@@ -32,10 +51,28 @@ export class UptechGrowthBookTypescriptWrapper {
 
     /// Check if a feature is on/off
     public isOn(featureId: string): boolean {
-      return this.client.feature(featureId).on ?? false;
+        const hasOverride = ([...this.overrides.keys()]).some(key => key == featureId);
+
+        if (hasOverride) {
+            const value = this.overrides.get(featureId);
+
+            return Boolean(value);
+        } else {
+            const overrideKey = this.getOverrideKeyById(featureId);
+            const featureOverride = this.getEnv(overrideKey);
+            if (featureOverride != null && featureOverride != undefined) {
+                return featureOverride == 'false' ? false : true ;
+            }
+            return this.client.feature(featureId).on ?? false;
+        }
     }
 
-    private createClient(seeds: Record<string, any>): GrowthBook {
+    private getOverrideKeyById(featureId: string): string {
+        const togl = 'TOGL_'
+        return togl + featureId.toLocaleUpperCase().replace(/-/g, '_')
+    }
+
+    private createClient(seeds: Map<string, any>): GrowthBook {
         return new GrowthBook({
             enabled: true,
             qaMode: false,
@@ -43,11 +80,14 @@ export class UptechGrowthBookTypescriptWrapper {
             features: this.seedsToGBFeatures(seeds),
         });
     }
-    private seedsToGBFeatures(seeds: Record<string, any>): Record<string, FeatureDefinition> {
-        const features = {};
-        for (const key in seeds) {
-            features[key] = { defaultValue: seeds[key] };
+    private seedsToGBFeatures(seeds: Map<string, any>): Record<string, FeatureDefinition> {
+        if (seeds == null) {
+            return {};
         }
+        const features = {};
+        seeds.forEach((value, key) => {
+            features[key] = { defaultValue: value };
+        })
         return features;
     }
 }

@@ -54,11 +54,11 @@ const port = 8080; // default port to listen
 // ...
 
 app.listen( port, () => {
-    Togls.instance.init(
+    Togls.instance.init({
 		seeds: {
 		  'example-toggle-higher-fee': false,
 		},
-	);
+	});
 } );
 
 // ...
@@ -105,7 +105,9 @@ import { Togls } from 'yourproject/togls.ts';
       describe('when example-toggle-higher-fee is off', () {
         beforeEach(() {
           Togls.instance
-              .initForTests(seeds: {'example-toggle-higher-fee': false});
+              .initForTests({
+                seeds: {'example-toggle-higher-fee': false}
+              });
         });
 
        it('returns amount with fee of 10 added', () {
@@ -116,7 +118,9 @@ import { Togls } from 'yourproject/togls.ts';
 
       describe('when example-toggle-higher-fee is on', () {
         beforeEach(() {
-          Togls.instance.initForTests(seeds: {'example-toggle-higher-fee': true});
+          Togls.instance.initForTests({
+            seeds: {'example-toggle-higher-fee': true}
+          });
         });
 
         it('returns amount with fee of 20 added', () {
