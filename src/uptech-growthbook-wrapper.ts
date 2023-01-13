@@ -9,13 +9,25 @@ export class UptechGrowthBookTypescriptWrapper {
 
     public async init(seeds?: any): Promise<void> {
         this.client = this.createClient(seeds);
-        const growthbookResult = await fetch(this.url)
-        const growthbook = await growthbookResult.json();
-        this.client.setFeatures(growthbook.features);
+        await this.refresh();
     }
 
     public initForTests(seeds: any): void {
         this.client = this.createClient(seeds);
+    }
+
+    /// Force a refresh of toggles from the server
+    public async refresh(): Promise<void> {
+        try {
+            const growthbookResult = await fetch(this.url)
+            const growthbook = await growthbookResult.json();
+            this.client.setFeatures(growthbook.features);
+        } catch(e) {
+            console.log({
+                message: 'Error while fetching features from GrowthBook',
+                e
+              });
+        }
     }
 
     /// Check if a feature is on/off
