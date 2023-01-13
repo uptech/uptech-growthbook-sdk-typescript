@@ -72,6 +72,28 @@ launched the app and the network connection is not working or the GrowthBook
 service was down then the toggles would evaluate to the value specified in the
 `seeds`.
 
+### Adding overrides
+
+If you want to overrides, you have two options. First, you can add them to the init call:
+```javascript
+// ...
+
+app.listen( port, () => {
+    Togls.instance.init({
+		seeds: {
+		  'example-toggle-higher-fee': false,
+		},
+    overrides: {
+		  'example-toggle-higher-fee': true,
+		},
+	});
+} );
+
+// ...
+```
+Alternatively, you can add override values to your `.env` file for specific features in Growthbook. With this method, overrides do not need to be passed into the init method. To ensure that your overrides perform as intended, please use `UPPER_CASE_SNAKE_CASE` with `TOGL_` appended to the beginning
+Example: `example-toggle-higher-fee` becomes `TOGL_EXAMPLE_TOGGLE_HIGHER_FEE`
+
 ## Usage
 
 Once you have it setup you are ready to start using it. The following examples
