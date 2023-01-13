@@ -3,7 +3,8 @@ import { FeatureDefinition, GrowthBook } from "@growthbook/growthbook";
 interface InitParameters {
     seeds?: Map<string, any>,
     overrides?: Map<string, any>,
-}
+    rules?: Array<Map<string, any>>,
+}   
 
 export class UptechGrowthBookTypescriptWrapper {
     constructor(apiUrl: string, getEnv: (key: string) => string | undefined = (key) => process.env[key]) {
@@ -26,13 +27,13 @@ export class UptechGrowthBookTypescriptWrapper {
         await this.refresh();
     }
 
-    public initForTests({seeds, overrides}: InitParameters
+    public initForTests({seeds, overrides, rules}: InitParameters
     ): void {
         this.overrides.clear();
         if (overrides != null) {
             this.overrides = overrides;
         }
-        this.client = this.createClient(seeds);
+        this.client = this.createClient(seeds, rules);
     }
 
     /// Force a refresh of toggles from the server
@@ -72,15 +73,15 @@ export class UptechGrowthBookTypescriptWrapper {
         return togl + featureId.toLocaleUpperCase().replace(/-/g, '_')
     }
 
-    private createClient(seeds: Map<string, any>): GrowthBook {
+    private createClient(seeds: Map<string, any>, rules?: Array<Map<string, any>>): GrowthBook {
         return new GrowthBook({
             enabled: true,
             qaMode: false,
             trackingCallback: (gbExperiment, gbExperimentResult) => {},
-            features: this.seedsToGBFeatures(seeds),
+            features: this.seedsToGBFeatures(seeds, rules),
         });
     }
-    private seedsToGBFeatures(seeds: Map<string, any>): Record<string, FeatureDefinition> {
+    private seedsToGBFeatures(seeds: Map<string, any>, rules?: Array<Map<string, any>>): Record<string, FeatureDefinition> {
         if (seeds == null) {
             return {};
         }
