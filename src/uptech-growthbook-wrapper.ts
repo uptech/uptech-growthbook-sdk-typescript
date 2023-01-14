@@ -3,7 +3,8 @@ import { FeatureDefinition, GrowthBook } from "@growthbook/growthbook";
 interface InitParameters {
     seeds?: Map<string, any>,
     overrides?: Map<string, any>,
-    rules?: Array<Map<string, any>>,
+    attributes?: Map<string, any>,
+    rules?: Array<Record<string, any>>,
 }   
 
 export class UptechGrowthBookTypescriptWrapper {
@@ -14,24 +15,33 @@ export class UptechGrowthBookTypescriptWrapper {
     private client: GrowthBook;
     private readonly url: string;
     private overrides: Map<string, any> = new Map();
+    private attributes: Map<string, any> = new Map();
     getEnv: (key: string) => string;
 
     public async init(
-        {seeds, overrides}: InitParameters
+        {seeds, overrides, attributes}: InitParameters
     ): Promise<void> {
         this.overrides.clear();
         if (overrides != null) {
             this.overrides = overrides;
         }
+        this.attributes.clear();
+        if (attributes != null) {
+            this.attributes = attributes;
+        }
         this.client = this.createClient(seeds);
         await this.refresh();
     }
 
-    public initForTests({seeds, overrides, rules}: InitParameters
+    public initForTests({seeds, overrides, attributes, rules}: InitParameters
     ): void {
         this.overrides.clear();
         if (overrides != null) {
             this.overrides = overrides;
+        }
+        this.attributes.clear();
+        if (attributes != null) {
+            this.attributes = attributes;
         }
         this.client = this.createClient(seeds, rules);
     }
@@ -73,21 +83,33 @@ export class UptechGrowthBookTypescriptWrapper {
         return togl + featureId.toLocaleUpperCase().replace(/-/g, '_')
     }
 
-    private createClient(seeds: Map<string, any>, rules?: Array<Map<string, any>>): GrowthBook {
+    private createClient(seeds: Map<string, any>, rules?: Array<Record<string, any>>): GrowthBook {
         return new GrowthBook({
             enabled: true,
             qaMode: false,
             trackingCallback: (gbExperiment, gbExperimentResult) => {},
+            attributes: this.getGBAttributes(),
             features: this.seedsToGBFeatures(seeds, rules),
         });
     }
-    private seedsToGBFeatures(seeds: Map<string, any>, rules?: Array<Map<string, any>>): Record<string, FeatureDefinition> {
+    private seedsToGBFeatures(seeds: Map<string, any>, rules?: Array<Record<string, any>>): Record<string, FeatureDefinition> {
         if (seeds == null) {
             return {};
         }
         const features = {};
         seeds.forEach((value, key) => {
-            features[key] = { defaultValue: value };
+            features[key] = rules ? { defaultValue: value, rules } : { defaultValue: value };
+        })
+        return features;
+    }
+
+    private getGBAttributes(): Record<string, any> {
+        if (this.attributes == null) {
+            return {};
+        }
+        const features = {};
+        this.attributes.forEach((value, key) => {
+            features[key] = value;
         })
         return features;
     }
