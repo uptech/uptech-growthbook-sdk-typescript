@@ -94,6 +94,27 @@ app.listen( port, () => {
 Alternatively, you can add override values to your `.env` file for specific features in Growthbook. With this method, overrides do not need to be passed into the init method. To ensure that your overrides perform as intended, please use `UPPER_CASE_SNAKE_CASE` with `TOGL_` appended to the beginning
 Example: `example-toggle-higher-fee` becomes `TOGL_EXAMPLE_TOGGLE_HIGHER_FEE`
 
+### Adding attributes
+If you want to add attributes at itialization, you can add values into the `attributes` key in the init function. This is useful if, for instance, you are only allowing certain versions of your app to access a feature.
+```javascript
+// ...
+
+app.listen( port, () => {
+    const version = getVersionNumber(); // this is a method you create and provide the logic for
+    Togls.instance.init({
+		  seeds: {
+		    'example-toggle-higher-fee': false,
+		  },
+      overrides: {
+		    'example-toggle-higher-fee': true,
+		  },
+      attributes: attributes: {'version': version},
+	});
+} );
+
+// ...
+```
+
 ## Usage
 
 Once you have it setup you are ready to start using it. The following examples
