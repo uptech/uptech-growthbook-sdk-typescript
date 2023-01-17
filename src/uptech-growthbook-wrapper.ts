@@ -66,7 +66,7 @@ export class UptechGrowthBookTypescriptWrapper {
 
     /// Check if a feature is on/off
     public isOn(featureId: string): boolean {
-        const hasOverride = ([...this.overrides.keys()]).some(key => key == featureId);
+        const hasOverride = this.overrides.has(featureId);
 
         if (hasOverride) {
             const value = this.overrides.get(featureId);
@@ -80,6 +80,18 @@ export class UptechGrowthBookTypescriptWrapper {
             }
             return this.client.feature(featureId).on ?? false;
         }
+    }
+
+    /// Return the value of a feature.
+    /// If the feature does not have a value configured, returns null.
+    public value(featureId: string): any {
+      const hasOverride = this.overrides.has(featureId);
+    
+      if (hasOverride) {
+        return this.overrides.get(featureId);
+      }
+    
+      return this.client.getFeatureValue(featureId, null);
     }
 
     private getOverrideKeyById(featureId: string): string {

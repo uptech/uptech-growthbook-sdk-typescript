@@ -293,4 +293,49 @@ describe("Uptech Growthbook Wrapper", () => {
           });
         });
     });
-  });
+
+    describe('value', () => {
+      const instance = new UptechGrowthBookTypescriptWrapper('https://cdn.growthbook.io/api/features/dummy-api-key');
+      const features = new Map<string, any>();
+        features.set('string-value-feature', 'value')
+        features.set('int-value-feature', 1)
+        features.set('bool-value-feature', true)
+      describe('when no value is found for the feature', () => {
+        
+        beforeEach(() => {
+          instance.initForTests({seeds: features});
+        });
+
+        it('returns null', () => {
+          expect(instance.value('some-other-feature')).toEqual(null);
+        });
+      });
+
+      describe('when a feature value is present', () => {
+        beforeEach(() => {
+          instance.initForTests({seeds: features});
+        });
+
+        it('returns the feature value', () => {
+          expect(
+              instance.value('string-value-feature')).toEqual('value');
+          expect(instance.value('int-value-feature')).toEqual(1);
+          expect(instance.value('bool-value-feature')).toEqual(true);
+        });
+      });
+
+      describe('when an override is present', () => {
+        beforeEach(() => {
+          instance.initForTests({overrides: features});
+        });
+
+        it('returns the overridden value', () => {
+          expect(
+            instance.value('string-value-feature')).toEqual('value');
+        expect(instance.value('int-value-feature')).toEqual(1);
+        expect(instance.value('bool-value-feature')).toEqual(true);
+        });
+      });
+    });
+
+});
