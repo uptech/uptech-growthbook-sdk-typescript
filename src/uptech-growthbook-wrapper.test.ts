@@ -176,5 +176,121 @@ describe("Uptech Growthbook Wrapper", () => {
             });
           });
         });
+
+        describe('when the attribute is added after init', () => {
+          const instance = new UptechGrowthBookTypescriptWrapper('https://cdn.growthbook.io/api/features/dummy-api-key');
+          describe('and the major in the attribute is greater than the rules', () => {
+            beforeEach(() => {
+              instance.initForTests({
+                seeds: new Map<string, any>().set('some-feature-name', false),
+                'rules': [{
+                  'condition': {
+                    'version': {'$gt': '1.0.0'}
+                  },
+                  'force': true
+                }],
+              });
+              instance.setAttributes(new Map<string, any>().set('version', '2.0.1'));
+            });
+            it('returns true', () => {
+              expect(instance.isOn('some-feature-name')).toEqual(true);
+            });
+          });
+
+          describe('and the minor in the attribute is greater than the rules', () => {
+              beforeEach(() => {
+                instance.initForTests({
+                  seeds: new Map<string, any>().set('some-feature-name', false),
+                  rules: [{
+                    'condition': {
+                      'version': {'$gt': '1.0.1'}
+                    },
+                    'force': true
+                  }],
+                });
+                instance.setAttributes(new Map<string, any>().set('version', '1.1.0'));
+              });
+  
+            it('returns true', () => {
+              expect(instance.isOn('some-feature-name')).toEqual(true);
+            });
+          });
+
+          describe('and the patch in the attribute is greater than the rules', () => {
+            beforeEach(() => {
+              instance.initForTests({
+                seeds: new Map<string, any>().set('some-feature-name', false),
+                rules: [{
+                  'condition': {
+                    'version': {'$gt': '1.0.1'}
+                  },
+                  'force': true
+                }],
+              });
+              instance.setAttributes(new Map<string, any>().set('version', '1.0.9'));
+            });
+
+          it('returns true', () => {
+            expect(instance.isOn('some-feature-name')).toEqual(true);
+          });
+        });
+
+          describe('and the major in the attribute is less than the rules', () => {
+            beforeEach(() => {
+              instance.initForTests({
+                seeds: new Map<string, any>().set('some-feature-name', false),
+                'rules': [{
+                  'condition': {
+                    'version': {'$gt': '1.0.0'}
+                  },
+                  'force': true
+                }],
+              });
+              instance.setAttributes(new Map<string, any>().set('version', '0.0.9'));
+            });
+  
+            it('returns false', () => {
+              expect(instance.isOn('some-feature')).toEqual(false);
+            });
+          });
+
+          describe('and the minor in the attribute is less than the rules', () => {
+            beforeEach(() => {
+              instance.initForTests({
+                seeds: new Map<string, any>().set('some-feature-name', false),
+                'rules': [{
+                  'condition': {
+                    'version': {'$gt': '1.1.0'}
+                  },
+                  'force': true
+                }],
+              });
+              instance.setAttributes(new Map<string, any>().set('version', '1.0.9'));
+            });
+  
+            it('returns false', () => {
+              expect(instance.isOn('some-feature')).toEqual(false);
+            });
+          });
+
+          describe('and the patch in the attribute is less than the rules', () => {
+            beforeEach(() => {
+              instance.initForTests({
+                seeds: new Map<string, any>().set('some-feature-name', false),
+                'rules': [{
+                  'condition': {
+                    'version': {'$gt': '1.0.2'}
+                  },
+                  'force': true
+                }],
+              });
+              instance.setAttributes(new Map<string, any>().set('version', '1.0.1'));
+            });
+  
+            it('returns false', () => {
+              expect(instance.isOn('some-feature')).toEqual(false);
+            });
+          });
+        });
     });
   });

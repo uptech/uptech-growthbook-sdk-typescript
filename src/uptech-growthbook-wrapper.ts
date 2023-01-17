@@ -60,6 +60,10 @@ export class UptechGrowthBookTypescriptWrapper {
         }
     }
 
+    public setAttributes(attributes: Map<string, any>): void {
+        this.client.setAttributes(this.getGBAttributes(attributes));
+    }
+
     /// Check if a feature is on/off
     public isOn(featureId: string): boolean {
         const hasOverride = ([...this.overrides.keys()]).some(key => key == featureId);
@@ -88,7 +92,7 @@ export class UptechGrowthBookTypescriptWrapper {
             enabled: true,
             qaMode: false,
             trackingCallback: (gbExperiment, gbExperimentResult) => {},
-            attributes: this.getGBAttributes(),
+            attributes: this.getGBAttributes(this.attributes),
             features: this.seedsToGBFeatures(seeds, rules),
         });
     }
@@ -103,12 +107,12 @@ export class UptechGrowthBookTypescriptWrapper {
         return features;
     }
 
-    private getGBAttributes(): Record<string, any> {
-        if (this.attributes == null) {
+    private getGBAttributes(attributes: Map<string, any>): Record<string, any> {
+        if (attributes == null) {
             return {};
         }
         const features = {};
-        this.attributes.forEach((value, key) => {
+        attributes.forEach((value, key) => {
             features[key] = value;
         })
         return features;
