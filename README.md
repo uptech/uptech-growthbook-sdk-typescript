@@ -138,6 +138,21 @@ sampleApplyFee(amount: number): number {
 }
 ```
 
+### Evaluate Feature value
+```javascript
+import { Togls } from 'yourproject/togls.ts';
+
+sampleApplyFee(amount: number): number {
+  // Note: feature value can be of any type
+  const featureValue = Togls.instance.value('example-toggle-higher-fee');
+  if (featureValue != 0) {
+    return amount + 20;
+  } else {
+    return amount + 10;
+  }
+}
+```
+
 ### Set attributes
 Additional attributes can be set after initialization. This is a common use case in which an id attribute is set after user login (useful for canary testing). 
 ```javascript
