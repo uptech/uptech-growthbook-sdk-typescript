@@ -137,6 +137,17 @@ sampleApplyFee(amount: number): number {
   }
 }
 ```
+
+### Set attributes
+Additional attributes can be set after initialization. This is a common use case in which an id attribute is set after user login (useful for canary testing). 
+```javascript
+import { Togls } from 'yourproject/togls.ts';
+sampleLogIn(): void {
+  const userId = await login(); // Fake method that logs in user and gets user id
+  Togls.instance.setAttributes({'id': userId});
+}
+```
+
 ### Control toggles in automated tests
 
 ```javascript
