@@ -1,5 +1,5 @@
 {
-  "name": "uptech-growthbook-sdk-typescript",
+  "name": "@uptechworks/uptech-growthbook-sdk-typescript",
   "version": "0.1.0",
   "description": "A thin wrapper around GrowthBook's Javascript SDK to support automated testing",
   "main": "dist/index.js",
