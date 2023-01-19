@@ -8,7 +8,13 @@
     "/dist"
   ],
   "scripts": {
-    "test": "npx jest"
+    "test": "jest",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:lastChanged": "jest --changedFilesWithAncestor",
+    "test:lastChanged:bail": "jest --bail --changedFilesWithAncestor",
+    "test:bail": "jest --bail=1 src/",
+    "test:cov": "jest --coverage",
+    "test:cov:bail": "jest --coverage --bail=1 src/ && lcov --remove coverage/lcov.info 'src/models/*' -o coverage/lcov.info"
   },
   "author": "",
   "license": "MIT",
