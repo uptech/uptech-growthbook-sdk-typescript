@@ -35,11 +35,9 @@ really up to you how you do this. This is just a suggestion.
 
 ```javascript
 class Togls extends UptechGrowthBookTypescriptWrapper {
-  static instance: Togls = new Togls(
-        // In GrowthBook dashboard > SDK Endpoints url: https://cdn.growthbook.io/api/features/dev_Y1WwxOm9sDnIsO1DLvwJk76z3ribr3VoiTsaOs?project=prj_29g61lbb6s8290
-        // Include the entire url above
-        apiKeyUrl: 'your-api-key-url', 
-  );
+  // In GrowthBook dashboard > SDK Endpoints url: https://cdn.growthbook.io/api/features/dev_Y1WwxOm9sDnIsO1DLvwJk76z3ribr3VoiTsaOs?project=prj_29g61lbb6s8290
+  // Include the entire url
+  static instance: Togls = new Togls('your-api-key-url');
 }
 ```
 
@@ -55,11 +53,9 @@ const port = 8080; // default port to listen
 
 app.listen( port, () => {
     Togls.instance.init({
-		seeds: {
-		  'example-toggle-higher-fee': false,
-		},
+		seeds: new Map([['example-toggle-higher-fee', false]]),
 	});
-} );
+});
 
 // ...
 ```
@@ -80,14 +76,10 @@ If you want to overrides, you have two options. First, you can add them to the i
 
 app.listen( port, () => {
     Togls.instance.init({
-		seeds: {
-		  'example-toggle-higher-fee': false,
-		},
-    overrides: {
-		  'example-toggle-higher-fee': true,
-		},
+		seeds:  new Map([['example-toggle-higher-fee', false]]),
+    overrides:  new Map([['example-toggle-higher-fee', true]]),
 	});
-} );
+});
 
 // ...
 ```
@@ -102,15 +94,11 @@ If you want to add attributes at itialization, you can add values into the `attr
 app.listen( port, () => {
     const version = getVersionNumber(); // this is a method you create and provide the logic for
     Togls.instance.init({
-		  seeds: {
-		    'example-toggle-higher-fee': false,
-		  },
-      overrides: {
-		    'example-toggle-higher-fee': true,
-		  },
-      attributes: attributes: {'version': version},
+		  seeds:  new Map([['example-toggle-higher-fee', false]]),
+      overrides:  new Map([['example-toggle-higher-fee', true]]),
+      attributes: attributes: new Map([['version', version]]),
 	});
-} );
+});
 
 // ...
 ```
@@ -154,12 +142,12 @@ sampleApplyFee(amount: number): number {
 ```
 
 ### Set attributes
-Additional attributes can be set after initialization. This is a common use case in which an id attribute is set after user login (useful for canary testing). 
+Additional attributes can be set after initialization. This is a common use case in which an id attribute is set after user login (useful for canary testing).
 ```javascript
 import { Togls } from 'yourproject/togls.ts';
 sampleLogIn(): void {
   const userId = await login(); // Fake method that logs in user and gets user id
-  Togls.instance.setAttributes({'id': userId});
+  Togls.instance.setAttributes(new Map([['id', userId]]));
 }
 ```
 
@@ -175,7 +163,7 @@ import { Togls } from 'yourproject/togls.ts';
         beforeEach(() {
           Togls.instance
               .initForTests({
-                seeds: {'example-toggle-higher-fee': false}
+                seeds:  new Map([['example-toggle-higher-fee', false]]),
               });
         });
 
@@ -188,7 +176,7 @@ import { Togls } from 'yourproject/togls.ts';
       describe('when example-toggle-higher-fee is on', () {
         beforeEach(() {
           Togls.instance.initForTests({
-            seeds: {'example-toggle-higher-fee': true}
+            seeds:  new Map([['example-toggle-higher-fee', true]]),
           });
         });
 
