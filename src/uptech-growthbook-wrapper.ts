@@ -1,5 +1,7 @@
-import { FeatureDefinition, GrowthBook } from "@growthbook/growthbook";
-import fetch from 'cross-fetch';
+import { FeatureDefinition, GrowthBook, setPolyfills } from "@growthbook/growthbook";
+import cross_fetch from 'cross-fetch';
+
+setPolyfills({ fetch: cross_fetch });
 
 interface InitParameters {
   seeds?: Map<string, any>,
@@ -9,15 +11,17 @@ interface InitParameters {
 }
 
 export class UptechGrowthBookTypescriptWrapper {
-  constructor(apiUrl: string, getEnv: (key: string) => string | undefined = (key) => process.env[key]) {
-    this.url = apiUrl;
+  constructor(apiHost: string, clientKey: string, getEnv: (key: string) => string | undefined = (key) => process.env[key]) {
+    this.apiHost = apiHost;
+    this.clientKey = clientKey;
     this.getEnv = getEnv;
   }
   private client: GrowthBook;
-  private readonly url: string;
+  private readonly apiHost: string;
+  private readonly clientKey: string;
   private overrides: Map<string, any> = new Map();
   private attributes: Map<string, any> = new Map();
-  getEnv: (key: string) => string;
+  private getEnv: (key: string) => string;
 
   public async init(
     { seeds, overrides, attributes }: InitParameters
@@ -31,7 +35,7 @@ export class UptechGrowthBookTypescriptWrapper {
       this.attributes = attributes;
     }
     this.client = this.createClient(seeds);
-    await this.refresh();
+    await this.client.loadFeatures();
   }
 
   public initForTests({ seeds, overrides, attributes, rules }: InitParameters
@@ -49,16 +53,7 @@ export class UptechGrowthBookTypescriptWrapper {
 
   /// Force a refresh of toggles from the server
   public async refresh(): Promise<void> {
-    try {
-      const growthbookResult = await fetch(this.url)
-      const growthbook = await growthbookResult.json();
-      this.client.setFeatures(growthbook.features);
-    } catch (e) {
-      console.log({
-        message: 'Error while fetching features from GrowthBook',
-        e
-      });
-    }
+    await this.client.refreshFeatures()
   }
 
   public setAttributes(attributes: Map<string, any>): void {
@@ -102,13 +97,17 @@ export class UptechGrowthBookTypescriptWrapper {
 
   private createClient(seeds: Map<string, any>, rules?: Array<Record<string, any>>): GrowthBook {
     return new GrowthBook({
+      apiHost: this.apiHost,
+      clientKey: this.clientKey,
       enabled: true,
       qaMode: false,
       trackingCallback: (gbExperiment, gbExperimentResult) => { },
       attributes: this.getGBAttributes(this.attributes),
       features: this.seedsToGBFeatures(seeds, rules),
     });
+
   }
+
   private seedsToGBFeatures(seeds: Map<string, any>, rules?: Array<Record<string, any>>): Record<string, FeatureDefinition> {
     if (seeds == null) {
       return {};
