@@ -4,6 +4,8 @@ libs_path=${0:a:h}
 
 source "$libs_path/git_backed_test_coverage.zsh"
 
+sha=$1
+
 git fetch --all -p
 fetch_test_coverage_data "origin"
 if [ $? -ne 0 ]; then
@@ -11,4 +13,4 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-git rev-list HEAD...$2 | xargs -L1 ${dot_git_ps_path}/show_commit_code_coverage $1
+git rev-list HEAD...$sha | xargs -I '{}' -L1 ${libs_path}/show_commit_code_coverage {}
