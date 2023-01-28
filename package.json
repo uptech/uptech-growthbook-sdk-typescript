@@ -8,6 +8,7 @@
     "/dist"
   ],
   "scripts": {
+    "publish": "tsc && npm publish",
     "test": "jest",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:lastChanged": "jest --changedFilesWithAncestor",
