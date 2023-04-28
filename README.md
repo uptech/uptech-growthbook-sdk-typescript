@@ -1,6 +1,6 @@
-## Uptech GrowthBook SDK Flutter Wrapper
+## Uptech GrowthBook SDK Wrapper
 
-This project is a thin wrapper around the [GrowthBook Flutter SDK](https://github.com/growthbook/growthbook) so that we
+This project is a thin wrapper around the [GrowthBook SDK](https://github.com/growthbook/growthbook) so that we
 can use the [GrowthBook][] service to manage feature toggles while also being
 able to manage toggle states properly within automated test suites.
 
