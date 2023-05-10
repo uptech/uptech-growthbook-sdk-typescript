@@ -4,6 +4,12 @@ This project is a thin wrapper around the [GrowthBook SDK](https://github.com/gr
 can use the [GrowthBook][] service to manage feature toggles while also being
 able to manage toggle states properly within automated test suites.
 
+## Install
+
+```
+npm i @uptechworks/uptech-growthbook-sdk-typescript
+```
+
 ## Development
 
 Get dependencies
@@ -28,7 +34,7 @@ way you want. You need to get the read-only API key for each of the
 environments and configure them in your app per environment.
 
 Then you need to setup a singleton in your app to to house the shared instance
-of the `UptechGrowthBookTypescriptWrapper`. *Note:* This is what needs the `apiKeyUrl` that
+of the `UptechGrowthBookTypescriptWrapper`. _Note:_ This is what needs the `apiKeyUrl` that
 should come from your environment config and **not** be hard coded in your app.
 This might look as follows maybe in a file called, `src/togls.ts`. It is
 really up to you how you do this. This is just a suggestion.
@@ -37,7 +43,7 @@ really up to you how you do this. This is just a suggestion.
 class Togls extends UptechGrowthBookTypescriptWrapper {
   // In GrowthBook dashboard > SDK Endpoints url: https://cdn.growthbook.io/api/features/dev_Y1WwxOm9sDnIsO1DLvwJk76z3ribr3VoiTsaOs?project=prj_29g61lbb6s8290
   // Include the entire url
-  static instance: Togls = new Togls('your-api-key-url');
+  static instance: Togls = new Togls("your-api-key-url");
 }
 ```
 
@@ -51,10 +57,10 @@ const port = 8080; // default port to listen
 
 // ...
 
-app.listen( port, () => {
-    Togls.instance.init({
-		seeds: new Map([['example-toggle-higher-fee', false]]),
-	});
+app.listen(port, () => {
+  Togls.instance.init({
+    seeds: new Map([["example-toggle-higher-fee", false]]),
+  });
 });
 
 // ...
@@ -71,23 +77,27 @@ service was down then the toggles would evaluate to the value specified in the
 ### Adding overrides
 
 If you want to overrides, you have two options. First, you can add them to the init call:
+
 ```javascript
 // ...
 
-app.listen( port, () => {
-    Togls.instance.init({
-		seeds:  new Map([['example-toggle-higher-fee', false]]),
-    overrides:  new Map([['example-toggle-higher-fee', true]]),
-	});
+app.listen(port, () => {
+  Togls.instance.init({
+    seeds: new Map([["example-toggle-higher-fee", false]]),
+    overrides: new Map([["example-toggle-higher-fee", true]]),
+  });
 });
 
 // ...
 ```
+
 Alternatively, you can add override values to your `.env` file for specific features in Growthbook. With this method, overrides do not need to be passed into the init method. To ensure that your overrides perform as intended, please use `UPPER_CASE_SNAKE_CASE` with `TOGL_` appended to the beginning
 Example: `example-toggle-higher-fee` becomes `TOGL_EXAMPLE_TOGGLE_HIGHER_FEE`
 
 ### Adding attributes
+
 If you want to add attributes at itialization, you can add values into the `attributes` key in the init function. This is useful if, for instance, you are only allowing certain versions of your app to access a feature.
+
 ```javascript
 // ...
 
@@ -111,7 +121,6 @@ singleton. If you did something different you should still be able to use these
 as rough examples of how to evaluate a feature and how to control toggles in
 automated tests.
 
-
 ### Evaluate Feature
 
 ```javascript
@@ -127,6 +136,7 @@ sampleApplyFee(amount: number): number {
 ```
 
 ### Evaluate Feature value
+
 ```javascript
 import { Togls } from 'yourproject/togls.ts';
 
@@ -142,7 +152,9 @@ sampleApplyFee(amount: number): number {
 ```
 
 ### Set attributes
+
 Additional attributes can be set after initialization. This is a common use case in which an id attribute is set after user login (useful for canary testing).
+
 ```javascript
 import { Togls } from 'yourproject/togls.ts';
 sampleLogIn(): void {
