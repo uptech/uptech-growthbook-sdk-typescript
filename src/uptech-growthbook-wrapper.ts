@@ -1,9 +1,13 @@
-import { FeatureDefinition, GrowthBook, setPolyfills } from "@growthbook/growthbook";
-import cross_fetch from 'cross-fetch';
+import cross_fetch from 'cross-fetch'
+import {
+  FeatureDefinition,
+  GrowthBook,
+  setPolyfills,
+} from '@growthbook/growthbook'
 
 setPolyfills({ fetch: cross_fetch });
 
-interface InitParameters {
+export interface InitParameters {
   seeds?: Map<string, any>,
   overrides?: Map<string, any>,
   attributes?: Map<string, any>,

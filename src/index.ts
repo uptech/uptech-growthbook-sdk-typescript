@@ -1,1 +1,1 @@
-export { UptechGrowthBookTypescriptWrapper } from './uptech-growthbook-wrapper';
+export { InitParameters, UptechGrowthBookTypescriptWrapper } from './uptech-growthbook-wrapper';
