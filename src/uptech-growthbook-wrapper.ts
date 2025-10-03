@@ -39,7 +39,7 @@ export class UptechGrowthBookTypescriptWrapper {
       this.attributes = attributes;
     }
     this.client = this.createClient(seeds);
-    await this.client.loadFeatures();
+    await this.client.init();
   }
 
   public initForTests({ seeds, overrides, attributes, rules }: InitParameters
